@@ -51,6 +51,7 @@ public class MapsActivity extends FragmentActivity implements
     private PolylineOptions polylineOptions;
     private MarkerOptions marker;
     private ArrayList<LatLng> latLngList = null;
+    private SupportMapFragment mapFragment;
 
 
     @Override
@@ -58,11 +59,10 @@ public class MapsActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-    }
+     }
 
 
     /**
@@ -72,9 +72,8 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-
         mMap.setMyLocationEnabled(true);
+        mMap.setOnMapClickListener(this);
         try {
             LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             Criteria criteria = new Criteria();
@@ -84,8 +83,7 @@ public class MapsActivity extends FragmentActivity implements
                 onLocationChanged(location);
             }
             locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
-
-
+            //map.getView().setClickable(true);
             // Focus and Zoom into the chosen route
             LatLng from = new LatLng(49.62244358, 6.10898852);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(from, 15));
@@ -100,6 +98,7 @@ public class MapsActivity extends FragmentActivity implements
         }
 
     }
+
 
     @Override
     public void onProviderDisabled(String provider) {
@@ -121,6 +120,7 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onMapClick(LatLng point) {
+        Toast.makeText(getApplicationContext(),"Map Clicked" , Toast.LENGTH_LONG).show();
         //add marker MarkerOptions
         marker = new MarkerOptions();
         marker.position(point);
@@ -190,7 +190,6 @@ public class MapsActivity extends FragmentActivity implements
                 }
             });
             String tag[] = {"lat", "lng"};
-
             final int response = urlConnection.getResponseCode();
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document doc = builder.parse(in);
